@@ -1,0 +1,109 @@
+@import "tailwindcss";
+
+/* ── Aji Tkhdem Brand Tokens ───────────────────────────────────────── */
+:root {
+  /* Primary */
+  --blue:        #1F6FAF;
+  --blue-light:  #E8F2FB;
+  --blue-dark:   #2C4A6D;
+  --blue-hover:  #185d96;
+
+  /* Accent */
+  --orange:      #F26A21;
+  --orange-light:#FEF0E7;
+  --orange-hover:#d95c1a;
+
+  /* Neutrals */
+  --gray-bg:     #F2F4F7;
+  --gray-mid:    #6B7280;
+  --gray-line:   #E5E7EB;
+  --gray-text:   #111827;
+
+  --background:  #F2F4F7;
+  --foreground:  #111827;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+/* ── Scrollbar ─────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--gray-bg); }
+::-webkit-scrollbar-thumb { background: #c5cdd8; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--blue); }
+
+/* ── Brand utility classes ─────────────────────────────────────────── */
+.btn-primary {
+  background: var(--blue);
+  color: #fff;
+  border-radius: 0.5rem;
+  transition: background 0.2s;
+}
+.btn-primary:hover { background: var(--blue-hover); }
+
+.btn-accent {
+  background: var(--orange);
+  color: #fff;
+  border-radius: 0.5rem;
+  transition: background 0.2s;
+}
+.btn-accent:hover { background: var(--orange-hover); }
+
+.brand-card {
+  background: #fff;
+  border: 1px solid var(--gray-line);
+  border-radius: 0.75rem;
+}
+
+.brand-badge-blue {
+  background: var(--blue-light);
+  color: var(--blue);
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 0.75rem;
+  padding: 0.2rem 0.65rem;
+}
+
+.brand-badge-orange {
+  background: var(--orange-light);
+  color: var(--orange);
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 0.75rem;
+  padding: 0.2rem 0.65rem;
+}
+
+/* ── Landing page specific ─────────────────────────────────────────── */
+.nav-get-started {
+  background-color: #1F6FAF;
+}
+.nav-get-started:hover {
+  background-color: #2C4A6D;
+}
+
+.cta-primary {
+  background-color: #F26A21;
+  box-shadow: 0 8px 24px rgba(242,106,33,0.25);
+  transition: background-color 0.2s;
+}
+.cta-primary:hover {
+  background-color: #d95c1a;
+}
+
+.cta-secondary {
+  background-color: #F26A21;
+  color: #ffffff;
+  transition: background-color 0.2s;
+}
+.cta-secondary:hover {
+  background-color: #d95c1a;
+}
