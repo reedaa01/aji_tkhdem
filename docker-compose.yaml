@@ -1,0 +1,44 @@
+services:
+    mysql:
+        image: mysql:8.0
+        container_name: mysql
+        restart: unless-stopped
+        environment:
+            MYSQL_ROOT_PASSWORD: rootpassword
+            MYSQL_DATABASE: portfolio_saas
+        ports:
+            - "3306:3306"
+        volumes:
+            - mysql_data:/var/lib/mysql
+
+    backend:
+        build: ./backend
+        container_name: backend
+        restart: unless-stopped
+
+        ports:
+            - "5000:5000"
+        environment:
+            - DB_HOST=mysql
+            - DB_PORT=3306
+            - DB_USER=root
+            - DB_PASSWORD=rootpassword
+            - DB_NAME=portfolio_saas
+            - port=5000
+        depends_on:
+            - mysql
+        volumes:
+            - ./backend:/uploads:/app/uploads
+    frontend:
+        build: ./frontend
+        container_name: frontend
+        restart: unless-stopped
+        ports:
+            - "3000:3000"
+        environment: 
+            NEXT_PUBLIC_BACKEND_URL=http://localhost:5000/api
+        depends_on:
+            - backend
+
+volumes:
+    mysql_data:
