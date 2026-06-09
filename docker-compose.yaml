@@ -19,11 +19,11 @@ services:
         ports:
             - "5000:5000"
         environment:
-            - DB_HOST=mysql
+            - DB_HOST=localhost
             - DB_PORT=3306
             - DB_USER=root
-            - DB_PASSWORD=rootpassword
-            - DB_NAME=portfolio_saas
+            - DB_PASSWORD=Reda2001@Supmti
+            - DB_NAME=aji_tkhdem
             - PORT=5000
         depends_on:
             - mysql
