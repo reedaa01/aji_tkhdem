@@ -4,8 +4,8 @@ services:
         container_name: mysql
         restart: unless-stopped
         environment:
-            MYSQL_ROOT_PASSWORD: rootpassword
-            MYSQL_DATABASE: portfolio_saas
+            MYSQL_ROOT_PASSWORD: Reda2001@Supmti
+            MYSQL_DATABASE: aji_tkhdem
         ports:
             - "3306:3306"
         volumes:

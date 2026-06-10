@@ -53,7 +53,34 @@ app.use(errorHandler);
 
 // ─── Start Server ─────────────────────────────────────────────────────────────
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, async () => {
-  await testConnection();
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
+
+const startServer = async () => {
+  try {
+    await testConnection(); // verify DB first
+    const server = app.listen(PORT, () => {
+      logger.info(`Server running on http://localhost:${PORT}`);
+    });
+
+    const shutdown = () => {
+      logger.info('Shutting down server...');
+      server.close(() => process.exit(0));
+    };
+
+    process.on('SIGINT', shutdown);
+    process.on('SIGTERM', shutdown);
+  } catch (err) {
+    logger.error(`Startup failed: ${err.message}`, { stack: err.stack });
+    process.exit(1);
+  }
+};
+
+process.on('unhandledRejection', (reason) => {
+  logger.error(`Unhandled Rejection: ${reason}`);
 });
+
+process.on('uncaughtException', (err) => {
+  logger.error(`Uncaught Exception: ${err.message}`, { stack: err.stack });
+  process.exit(1);
+});
+
+startServer();
