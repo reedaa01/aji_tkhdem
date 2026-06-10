@@ -6,6 +6,12 @@ services:
         environment:
             MYSQL_ROOT_PASSWORD: Reda2001@Supmti
             MYSQL_DATABASE: aji_tkhdem
+        healthcheck:
+            test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-pReda2001@Supmti"]
+            interval: 10s
+            timeout: 5s
+            retries: 10
+            start_period: 30s
         ports:
             - "3306:3306"
         volumes:
@@ -28,7 +34,8 @@ services:
             - PORT=5000
             - NODE_ENV=development
         depends_on:
-            - mysql
+            mysql:
+                condition: service_healthy
         volumes:
             - ./backend/uploads:/app/uploads
         networks:
