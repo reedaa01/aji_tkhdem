@@ -30,8 +30,19 @@ const logger = createLogger({
   ],
 });
 
-// In development also print coloured output to the console
-if (process.env.NODE_ENV !== 'production') {
+// Always print to console in containers so runtime failures are visible in docker logs
+if (process.env.NODE_ENV === 'production') {
+  logger.add(
+    new transports.Console({
+      level: 'warn',
+      format: combine(
+        timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+        errors({ stack: true }),
+        logFormat
+      ),
+    })
+  );
+} else {
   logger.add(
     new transports.Console({
       format: combine(
