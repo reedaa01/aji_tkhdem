@@ -58,7 +58,7 @@ const startServer = async () => {
   try {
     await testConnection(); // verify DB first
     const server = app.listen(PORT, () => {
-      logger.info(`Server running on http://localhost:${PORT}`);
+      logger.info(`Server khdam a wlidi on http://localhost:${PORT}`);
     });
 
     const shutdown = () => {
