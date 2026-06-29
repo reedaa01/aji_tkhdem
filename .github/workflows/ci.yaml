@@ -1,4 +1,4 @@
-name: Continuous Integration
+name: Build and Push to ACR
 
 on:
   pull_request:
@@ -36,3 +36,20 @@ jobs:
 
       - name: Build Docker Images
         run: docker compose build
+
+      - name: Login to ACR
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          echo "${{ secrets.ACR_PASSWORD }}" | docker login ${{ secrets.ACR_LOGIN_SERVER }} -u "${{ secrets.ACR_USERNAME }}" --password-stdin
+
+      - name: Build and Push Backend Image
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/backend:latest -f backend/Dockerfile backend
+          docker push ${{ secrets.ACR_LOGIN_SERVER }}/backend:latest
+
+      - name: Build and Push Frontend Image
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/frontend:latest -f frontend/Dockerfile frontend
+          docker push ${{ secrets.ACR_LOGIN_SERVER }}/frontend:latest
