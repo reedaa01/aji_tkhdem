@@ -40,7 +40,7 @@ app.use('/api/applications', applicationRoutes);
 
 // ─── Health Check ──────────────────────────────────────────────────────────────
 app.get('/api/health', (req, res) => {
-  res.status(200).json({ success: true, message: 'Aji Tkhdem API is running 🚀' });
+  res.status(200).json({ success: true, message: 'Aji Tkhdem API is running ya wlidi ' });
 });
 
 // ─── 404 Handler ──────────────────────────────────────────────────────────────
