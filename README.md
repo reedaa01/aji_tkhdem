@@ -1,6 +1,16 @@
 # Aji Tkhdem DevOps Deployment Project
 
-> Production-style DevOps implementation for deploying a full-stack web application on Azure using Docker, GitHub Actions, Nginx, HTTPS, and a Prometheus/Grafana monitoring stack.
+![Azure](https://img.shields.io/badge/Azure-Cloud-0078D4?style=for-the-badge&logo=microsoftazure&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-Containers-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-CI/CD-2088FF?style=for-the-badge&logo=githubactions&logoColor=white)
+![Prometheus](https://img.shields.io/badge/Prometheus-Monitoring-E6522C?style=for-the-badge&logo=prometheus&logoColor=white)
+![Grafana](https://img.shields.io/badge/Grafana-Dashboards-F46800?style=for-the-badge&logo=grafana&logoColor=white)
+![Nginx](https://img.shields.io/badge/Nginx-Reverse_Proxy-009639?style=for-the-badge&logo=nginx&logoColor=white)
+![HTTPS](https://img.shields.io/badge/HTTPS-Let's_Encrypt-003A70?style=for-the-badge&logo=letsencrypt&logoColor=white)
+
+![Architecture](docs/architecture.png)
+
+Production-style DevOps implementation for deploying a full-stack web application on Azure using Docker, GitHub Actions, Nginx, HTTPS, and a Prometheus/Grafana monitoring stack.
 
 ## Project Overview
 
@@ -108,8 +118,8 @@ The Docker Compose configuration is the operational definition of the runtime st
 
 The CI/CD process is implemented with GitHub Actions and split into two workflows:
 
-- `.github/workflows/ci.yaml`: builds the application and pushes Docker images to Azure Container Registry
-- `.github/workflows/deploy.yml`: connects to the Azure VM over SSH and deploys the latest container images
+- `.github/workflows/ci.yaml`: validates the build, builds Docker images, and pushes frontend/backend images to Azure Container Registry on `main`
+- `.github/workflows/deploy.yml`: runs after the build-and-push workflow succeeds, connects to the Azure VM over SSH, pulls the latest images, and recreates the deployment
 
 ### CI/CD Pipeline Diagram
 
@@ -245,17 +255,62 @@ The `backend/` and `frontend/` directories are included as the workload being de
 
 ## Screenshots
 
-Add screenshots to `docs/screenshots/` as evidence of the live deployment and monitoring setup.
+The screenshots below provide visual evidence of the deployed application, CI/CD pipeline, image registry, and monitoring stack.
 
-| Screenshot | Description |
-| --- | --- |
-| `docs/screenshots/app-home.png` | Public application running through the production domain |
-| `docs/screenshots/https-certificate.png` | Browser certificate / HTTPS validation |
-| `docs/screenshots/github-actions-build.png` | Successful build and push workflow |
-| `docs/screenshots/github-actions-deploy.png` | Successful deployment workflow |
-| `docs/screenshots/acr-images.png` | Frontend and backend images in Azure Container Registry |
-| `docs/screenshots/grafana-dashboard.png` | Grafana dashboard for VM and container metrics |
-| `docs/screenshots/prometheus-targets.png` | Prometheus targets showing healthy exporters |
+### Application Homepage
+
+![Application homepage](docs/screenshots/app-home.png)
+
+### HTTPS Certificate
+
+![HTTPS certificate](docs/screenshots/https-certificate.png)
+
+### GitHub Actions - Build and Push
+
+![GitHub Actions build workflow](docs/screenshots/github-actions-build.png)
+
+### GitHub Actions - Deploy
+
+![GitHub Actions deploy workflow](docs/screenshots/github-actions-deploy.png)
+
+### Azure Container Registry
+
+![Azure Container Registry images](docs/screenshots/acr-images.png)
+
+### Grafana Dashboard
+
+![Grafana dashboard](docs/screenshots/grafana-dashboard.png)
+
+### Prometheus Targets
+
+![Prometheus targets](docs/screenshots/prometheus-targets.png)
+
+## GitHub Repository Metadata
+
+Recommended repository description:
+
+```text
+Production-style DevOps deployment on Azure using Docker, GitHub Actions, ACR, Nginx, Prometheus, and Grafana.
+```
+
+Recommended repository topics:
+
+```text
+azure
+docker
+docker-compose
+github-actions
+ci-cd
+devops
+nginx
+prometheus
+grafana
+nodejs
+nextjs
+mysql
+linux
+azure-container-registry
+```
 
 ## Environment and Secrets
 
