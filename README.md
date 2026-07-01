@@ -29,11 +29,6 @@ The application is deployed on an Ubuntu 24.04 Azure Virtual Machine. Docker Com
 
 The CI/CD pipeline builds the frontend and backend Docker images, pushes them to Azure Container Registry, then deploys the latest image versions on the Azure VM.
 
-### Architecture Image Placeholder
-
-> Add an exported architecture diagram image here:
->
-> `docs/architecture/aji-tkhdem-architecture.png`
 
 ## Infrastructure Diagram
 
