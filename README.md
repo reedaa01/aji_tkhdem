@@ -1,203 +1,306 @@
-# Aji Tkhdem — Full-Stack SaaS Career Platform
+# Aji Tkhdem DevOps Deployment Project
 
-A production-ready SaaS web application that allows users to build a professional portfolio, find remote jobs, and track applications.
+> Production-style DevOps implementation for deploying a full-stack web application on Azure using Docker, GitHub Actions, Nginx, HTTPS, and a Prometheus/Grafana monitoring stack.
 
----
+## Project Overview
 
-## 🏗️ Tech Stack
+This repository documents the DevOps implementation used to deploy **Aji Tkhdem**, an existing full-stack application, into a production-style cloud environment.
 
-| Layer        | Technology                         |
-|--------------|------------------------------------|
-| Frontend     | Next.js 14 (App Router), TypeScript, Tailwind CSS |
-| Backend      | Node.js + Express.js               |
-| Database     | MySQL                              |
-| Auth         | JWT (JSON Web Tokens)              |
-| File Uploads | Multer (local storage)             |
-| Jobs API     | Remotive Public API                |
+The main focus of this project is not application feature development. Instead, it demonstrates how a real web application can be containerized, delivered through CI/CD, deployed on a cloud virtual machine, exposed securely over HTTPS, and monitored using open-source observability tools.
 
----
+The project is designed as a portfolio-ready DevOps case study for recruiters, hiring managers, and technical reviewers who want to evaluate practical deployment, automation, infrastructure, and operations skills.
 
-## 📁 Project Structure
+## What This Project Demonstrates
 
-```
-Portfolio Saas/
-├── backend/                    # Express REST API
-│   ├── config/
-│   │   ├── db.js               # MySQL connection pool
-│   │   └── schema.sql          # Database schema
-│   ├── controllers/            # Business logic (MVC)
-│   │   ├── authController.js
-│   │   ├── portfolioController.js
-│   │   ├── skillController.js
-│   │   ├── experienceController.js
-│   │   ├── projectController.js
-│   │   ├── jobController.js
-│   │   └── applicationController.js
-│   ├── middleware/
-│   │   ├── auth.js             # JWT protect middleware
-│   │   ├── validate.js         # express-validator errors
-│   │   ├── upload.js           # Multer file upload handlers
-│   │   └── errorHandler.js     # Global error handler
-│   ├── models/                 # DB query layer
-│   │   ├── User.js
-│   │   ├── Portfolio.js
-│   │   ├── Skill.js
-│   │   ├── Experience.js
-│   │   ├── Project.js
-│   │   └── JobApplication.js
-│   ├── routes/                 # API route definitions
-│   │   ├── auth.js
-│   │   ├── portfolio.js
-│   │   ├── skills.js
-│   │   ├── experience.js
-│   │   ├── projects.js
-│   │   ├── jobs.js
-│   │   └── applications.js
-│   ├── uploads/                # Uploaded files (gitignored)
-│   │   ├── avatars/
-│   │   ├── cvs/
-│   │   └── projects/
-│   ├── .env                    # Environment variables
-│   └── server.js               # Express app entry point
-│
-└── frontend/                   # Next.js 14 App
-    ├── app/
-    │   ├── (auth)/             # Public auth routes
-    │   │   ├── login/page.tsx
-    │   │   └── register/page.tsx
-    │   ├── (dashboard)/        # Protected dashboard routes
-    │   │   ├── dashboard/page.tsx
-    │   │   ├── portfolio/page.tsx
-    │   │   ├── jobs/page.tsx
-    │   │   └── applications/page.tsx
-    │   ├── layout.tsx          # Root layout (AuthProvider + Toaster)
-    │   └── page.tsx            # Landing page
-    ├── components/
-    │   ├── ui/                 # Reusable UI primitives
-    │   │   ├── Button.tsx
-    │   │   ├── Input.tsx
-    │   │   ├── Textarea.tsx
-    │   │   ├── Select.tsx
-    │   │   ├── Card.tsx
-    │   │   ├── Modal.tsx
-    │   │   └── Spinner.tsx
-    │   └── layout/
-    │       └── Sidebar.tsx     # Responsive sidebar navigation
-    ├── hooks/
-    │   └── useAuth.tsx         # Auth context + provider
-    ├── lib/
-    │   ├── api.ts              # Axios instance with JWT interceptor
-    │   ├── services.ts         # All API service functions
-    │   └── utils.ts            # Helpers, formatters, color maps
-    └── types/
-        └── index.ts            # All TypeScript interfaces
+- Containerized deployment of a full-stack application with Docker and Docker Compose
+- CI/CD automation using GitHub Actions
+- Docker image publishing to Azure Container Registry
+- Remote deployment to an Azure Virtual Machine
+- Reverse proxy configuration with Nginx
+- HTTPS enablement using Let's Encrypt certificates
+- DNS configuration using DuckDNS
+- MySQL database deployment as a containerized service
+- Infrastructure and container monitoring with Prometheus, Grafana, Node Exporter, and cAdvisor
+- Separation of application runtime concerns from delivery and infrastructure concerns
+
+## Architecture Overview
+
+The application is deployed on an Ubuntu 24.04 Azure Virtual Machine. Docker Compose runs the application services, database, and monitoring stack. Nginx acts as the public entry point, routes traffic to the correct internal containers, and terminates HTTPS traffic using Let's Encrypt certificates.
+
+The CI/CD pipeline builds the frontend and backend Docker images, pushes them to Azure Container Registry, then deploys the latest image versions on the Azure VM.
+
+### Architecture Image Placeholder
+
+> Add an exported architecture diagram image here:
+>
+> `docs/architecture/aji-tkhdem-architecture.png`
+
+## Infrastructure Diagram
+
+```mermaid
+flowchart TB
+    user["User / Browser"]
+    dns["DuckDNS Domain"]
+    le["Let's Encrypt HTTPS"]
+    nginx["Nginx Reverse Proxy"]
+
+    subgraph azure["Azure Cloud"]
+        vm["Azure VM<br/>Ubuntu 24.04"]
+
+        subgraph docker["Docker Compose Runtime"]
+            frontend["Frontend<br/>Next.js Container"]
+            backend["Backend<br/>Node.js / Express Container"]
+            mysql["MySQL Container<br/>Persistent Volume"]
+            prometheus["Prometheus"]
+            grafana["Grafana"]
+            nodeExporter["Node Exporter"]
+            cadvisor["cAdvisor"]
+        end
+    end
+
+    acr["Azure Container Registry<br/>Frontend and Backend Images"]
+
+    user --> dns
+    dns --> le
+    le --> nginx
+    nginx --> frontend
+    nginx --> backend
+    backend --> mysql
+    acr --> frontend
+    acr --> backend
+    prometheus --> nodeExporter
+    prometheus --> cadvisor
+    grafana --> prometheus
 ```
 
----
+## Tech Stack
 
-## 🗄️ Database Schema
+| Area | Technology |
+| --- | --- |
+| Cloud Provider | Microsoft Azure |
+| Compute | Azure Virtual Machine, Ubuntu 24.04 |
+| Containers | Docker, Docker Compose |
+| Registry | Azure Container Registry |
+| CI/CD | GitHub Actions |
+| Reverse Proxy | Nginx |
+| DNS | DuckDNS |
+| TLS/HTTPS | Let's Encrypt |
+| Frontend Runtime | Next.js |
+| Backend Runtime | Node.js / Express |
+| Database | MySQL |
+| Metrics | Prometheus |
+| Dashboards | Grafana |
+| Host Metrics | Node Exporter |
+| Container Metrics | cAdvisor |
 
+## Infrastructure Overview
+
+The deployment environment is built around a single Azure VM running Ubuntu 24.04. The VM acts as the production host for the complete application stack.
+
+Core infrastructure responsibilities:
+
+- Run Docker and Docker Compose on the VM
+- Pull production images from Azure Container Registry
+- Run frontend, backend, MySQL, and monitoring containers
+- Persist MySQL and Grafana data using Docker volumes
+- Expose application traffic through Nginx
+- Route domain traffic from DuckDNS to the Azure VM
+- Secure public access with HTTPS certificates from Let's Encrypt
+
+The Docker Compose configuration is the operational definition of the runtime stack. It includes application services, database service, monitoring services, networking, health checks, and persistent volumes.
+
+## CI/CD Workflow
+
+The CI/CD process is implemented with GitHub Actions and split into two workflows:
+
+- `.github/workflows/ci.yaml`: builds the application and pushes Docker images to Azure Container Registry
+- `.github/workflows/deploy.yml`: connects to the Azure VM over SSH and deploys the latest container images
+
+### CI/CD Pipeline Diagram
+
+```mermaid
+flowchart LR
+    dev["Developer Push<br/>main branch"] --> gha["GitHub Actions"]
+    gha --> testBuild["Install Dependencies<br/>Build Frontend"]
+    testBuild --> dockerBuild["Build Docker Images"]
+    dockerBuild --> acrLogin["Login to Azure Container Registry"]
+    acrLogin --> pushBackend["Push Backend Image"]
+    acrLogin --> pushFrontend["Push Frontend Image"]
+    pushBackend --> deployWorkflow["Deployment Workflow"]
+    pushFrontend --> deployWorkflow
+    deployWorkflow --> ssh["SSH into Azure VM"]
+    ssh --> pull["docker compose pull"]
+    pull --> recreate["docker compose up -d<br/>--force-recreate"]
+    recreate --> prune["docker image prune -f"]
+    prune --> live["Updated Production Deployment"]
 ```
-users            — id, uuid, email, password, full_name, role
-portfolios       — user_id, headline, bio, phone, location, website, github, linkedin, avatar_url, cv_url
-skills           — user_id, name, level (beginner/intermediate/advanced/expert)
-experience       — user_id, company, position, description, start_date, end_date, is_current
-projects         — user_id, title, description, tech_stack, project_url, github_url, image_url
-job_applications — user_id, job_id, job_title, company_name, job_url, location, job_type, status, notes
+
+### Deployment Flow
+
+1. Code is pushed to the `main` branch.
+2. GitHub Actions checks out the repository.
+3. Frontend dependencies are installed and the frontend production build is validated.
+4. Backend dependencies are installed.
+5. Docker images are built for frontend and backend services.
+6. Images are pushed to Azure Container Registry.
+7. A deployment workflow runs after a successful image build workflow.
+8. GitHub Actions connects to the Azure VM using SSH.
+9. The VM authenticates with Azure Container Registry.
+10. Docker Compose pulls the latest images and recreates the running containers.
+11. Old unused Docker images are pruned from the VM.
+
+## Monitoring Stack
+
+The monitoring layer is deployed with Docker Compose alongside the application runtime.
+
+| Component | Purpose |
+| --- | --- |
+| Prometheus | Collects and stores time-series metrics |
+| Grafana | Visualizes metrics through dashboards |
+| Node Exporter | Exposes VM-level CPU, memory, disk, and network metrics |
+| cAdvisor | Exposes Docker container resource metrics |
+
+### Monitoring Architecture
+
+```mermaid
+flowchart TB
+    subgraph vm["Azure VM"]
+        nodeExporter["Node Exporter<br/>Host Metrics"]
+        cadvisor["cAdvisor<br/>Container Metrics"]
+        prometheus["Prometheus<br/>Metrics Collection"]
+        grafana["Grafana<br/>Dashboards"]
+
+        subgraph containers["Application Containers"]
+            frontend["Frontend"]
+            backend["Backend"]
+            mysql["MySQL"]
+        end
+    end
+
+    reviewer["Operator / Reviewer"] --> grafana
+    prometheus --> nodeExporter
+    prometheus --> cadvisor
+    cadvisor --> containers
+    grafana --> prometheus
 ```
 
----
+## Security Considerations
 
-## 🔌 API Endpoints
+This project applies common production deployment practices for a small self-managed cloud environment:
 
-### Auth
-| Method | Route              | Description           |
-|--------|--------------------|-----------------------|
-| POST   | /api/auth/register | Register new user     |
-| POST   | /api/auth/login    | Login, receive JWT    |
-| GET    | /api/auth/me       | Get current user      |
+- Public traffic is routed through Nginx instead of exposing every service directly.
+- HTTPS is enabled using Let's Encrypt certificates.
+- CI/CD credentials are stored as GitHub Actions secrets.
+- Azure Container Registry authentication is performed during CI/CD and deployment.
+- The deployment workflow uses SSH key authentication to access the VM.
+- MySQL data is stored in a Docker volume instead of inside disposable containers.
+- Internal services communicate over a Docker network.
+- Runtime configuration is provided through environment variables.
 
-### Portfolio
-| Method | Route                  | Description              |
-|--------|------------------------|--------------------------|
-| GET    | /api/portfolio         | Get full portfolio        |
-| PUT    | /api/portfolio         | Create / update profile   |
-| POST   | /api/portfolio/avatar  | Upload avatar image       |
-| POST   | /api/portfolio/cv      | Upload CV (PDF)           |
+Recommended production hardening:
 
-### Skills, Experience, Projects
-All support `GET /`, `POST /`, `PUT /:id`, `DELETE /:id`
+- Restrict direct access to Prometheus, Grafana, cAdvisor, and Node Exporter.
+- Use a dedicated non-root deployment user on the VM.
+- Rotate registry credentials and SSH keys regularly.
+- Move sensitive runtime values to a managed secret store.
+- Configure firewall rules to expose only required public ports.
+- Add automated database backups.
 
-### Jobs
-| Method | Route      | Query Params                  |
-|--------|------------|-------------------------------|
-| GET    | /api/jobs  | search, category, limit       |
+## Deployment Overview
 
-### Applications
-| Method | Route                  | Description                   |
-|--------|------------------------|-------------------------------|
-| GET    | /api/applications      | All user applications         |
-| GET    | /api/applications/stats| Status breakdown counts       |
-| POST   | /api/applications      | Apply to a job                |
-| PATCH  | /api/applications/:id  | Update status / notes         |
-| DELETE | /api/applications/:id  | Remove application            |
+The VM deployment follows a pull-based container update model:
 
----
-
-## 🚀 Setup Instructions
-
-### 1. MySQL Database
-```sql
--- Run the schema file
-mysql -u root -p < backend/config/schema.sql
-```
-
-### 2. Backend
 ```bash
-cd backend
-cp .env .env.local   # then fill in your values
-npm install
-npm run dev          # runs on http://localhost:5000
+docker login <acr-login-server>
+cd ~/aji_tkhdem
+docker compose pull
+docker compose up -d --force-recreate
+docker image prune -f
 ```
 
-### 3. Frontend
-```bash
-cd frontend
-npm install
-npm run dev          # runs on http://localhost:3000
+In the automated workflow, these steps are executed remotely by GitHub Actions after a successful image build and push.
+
+The production runtime is defined in:
+
+- `docker-compose.yaml`
+- `backend/Dockerfile`
+- `frontend/Dockerfile`
+- `.github/workflows/ci.yaml`
+- `.github/workflows/deploy.yml`
+
+## Project Structure
+
+```text
+.
+|-- .github/
+|   `-- workflows/
+|       |-- ci.yaml              # Build, validate, and push Docker images to ACR
+|       `-- deploy.yml           # Deploy latest images to the Azure VM over SSH
+|-- backend/                     # Existing Node.js / Express application source
+|-- frontend/                    # Existing Next.js application source
+|-- docs/
+|   |-- architecture/            # Architecture diagram exports and visual assets
+|   `-- screenshots/             # Deployment, monitoring, and application screenshots
+|-- docker-compose.yaml          # Production-style runtime stack
+|-- package.json                 # Workspace-level helper scripts
+`-- README.md                    # DevOps project documentation
 ```
 
-### Environment Variables
+The `backend/` and `frontend/` directories are included as the workload being deployed. The portfolio value of this repository is in the deployment architecture, automation, and operational setup around that workload.
 
-**backend/.env**
-```
-PORT=5000
-DB_HOST=localhost
-DB_USER=root
-DB_PASSWORD=your_password
-DB_NAME=aji_tkhdem
-JWT_SECRET=your_secret_key
-JWT_EXPIRES_IN=7d
-CLIENT_URL=http://localhost:3000
-JOBS_API_URL=https://remotive.com/api/remote-jobs
-```
+## Screenshots
 
-**frontend/.env.local**
-```
-NEXT_PUBLIC_API_URL=http://localhost:5000/api
-```
+Add screenshots to `docs/screenshots/` as evidence of the live deployment and monitoring setup.
 
----
+| Screenshot | Description |
+| --- | --- |
+| `docs/screenshots/app-home.png` | Public application running through the production domain |
+| `docs/screenshots/https-certificate.png` | Browser certificate / HTTPS validation |
+| `docs/screenshots/github-actions-build.png` | Successful build and push workflow |
+| `docs/screenshots/github-actions-deploy.png` | Successful deployment workflow |
+| `docs/screenshots/acr-images.png` | Frontend and backend images in Azure Container Registry |
+| `docs/screenshots/grafana-dashboard.png` | Grafana dashboard for VM and container metrics |
+| `docs/screenshots/prometheus-targets.png` | Prometheus targets showing healthy exporters |
 
-## ✅ Features
+## Environment and Secrets
 
-- [x] Secure JWT authentication (register / login / protected routes)
-- [x] Portfolio builder (bio, headline, skills, experience, projects)
-- [x] Avatar upload (image) and CV upload (PDF)
-- [x] Live remote job listings via Remotive API
-- [x] One-click job application with notes
-- [x] Application status pipeline (applied → interview → offer)
-- [x] Dashboard with stats and recent activity
-- [x] Fully responsive UI with Tailwind CSS
-- [x] Input validation on both frontend (Zod) and backend (express-validator)
-- [x] Global error handling and toast notifications
+The CI/CD workflows expect the following secrets to be configured in GitHub Actions:
+
+| Secret | Purpose |
+| --- | --- |
+| `ACR_LOGIN_SERVER` | Azure Container Registry login server |
+| `ACR_USERNAME` | Registry username or service principal username |
+| `ACR_PASSWORD` | Registry password or service principal password |
+| `AZURE_HOST` | Public IP or domain of the Azure VM |
+| `AZURE_USER` | SSH username for the Azure VM |
+| `AZURE_SSH_KEY` | Private SSH key used by the deployment workflow |
+
+Runtime application values are provided through environment files on the deployment host.
+
+## Future Improvements
+
+- Replace manual VM provisioning with Terraform or Bicep.
+- Add Ansible for repeatable VM configuration and Nginx setup.
+- Add blue-green or rolling deployment strategy.
+- Add automatic MySQL backups and restore testing.
+- Add alerting through Grafana Alerting or Alertmanager.
+- Add centralized logging with Loki or the ELK stack.
+- Add image vulnerability scanning before pushing to ACR.
+- Use immutable image tags instead of only `latest`.
+- Add branch protection rules and required workflow checks.
+- Add uptime monitoring for the public domain.
+
+## Lessons Learned
+
+- A working CI/CD pipeline is only valuable when deployment, secrets, runtime configuration, and rollback considerations are designed together.
+- Docker Compose is a practical orchestration layer for small production-style deployments, especially when paired with a reverse proxy and persistent volumes.
+- Monitoring should be deployed with the application from the beginning, not added after incidents occur.
+- Separating build and deployment workflows makes the pipeline easier to understand, debug, and extend.
+- ACR provides a clean boundary between CI image creation and VM runtime deployment.
+- Documenting architecture and operational decisions is part of the engineering work, especially for portfolio and handoff scenarios.
+
+## Professional Conclusion
+
+This project presents a complete DevOps deployment path for a real full-stack application: containerization, registry-based delivery, automated deployment, HTTPS exposure, and operational monitoring.
+
+It demonstrates practical skills across cloud infrastructure, Linux server deployment, Docker-based operations, GitHub Actions CI/CD, reverse proxy configuration, and observability. The result is a portfolio-quality DevOps project that shows not only that the application can run, but that it can be delivered, secured, monitored, and maintained in a production-style environment.
